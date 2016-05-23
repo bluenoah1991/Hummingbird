@@ -1,0 +1,18 @@
+{
+  "name": "InstFlow",
+  "version": "0.0.1",
+  "description": "Skype remind robot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Bot"
+  ],
+  "author": "CodeMeow",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "botbuilder": "~0.10.2",
+    "restify": "~4.0.4"
+  }
+}
