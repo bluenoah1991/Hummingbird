@@ -4,7 +4,8 @@ var restify = require('restify');
 var assert = require('chai').assert;
 
 describe('default test', function(done){
-    
+    this.timeout(20000);
+
     it('should respond MethodNotAllowedError', (done) => {
         var client = restify.createJsonClient({
             url: 'http://127.0.0.1:3978',
