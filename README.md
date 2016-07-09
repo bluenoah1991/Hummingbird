@@ -1,2 +1,2 @@
 # InstFlow
-Skype remind robot
+Skype robot
