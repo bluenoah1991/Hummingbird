@@ -8,7 +8,7 @@ describe('default test', function(done){
 
     it('should respond MethodNotAllowedError', (done) => {
         var client = restify.createJsonClient({
-            url: 'http://127.0.0.1:3978',
+            url: 'https://127.0.0.1:3978',
             version: '*'
         });
         client.get('/api/messages', function(err, req, res, obj){
