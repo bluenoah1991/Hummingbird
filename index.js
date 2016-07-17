@@ -27,6 +27,51 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
-bot.dialog('/', function (session) {
-    session.send("Hello World");
-});
+bot.dialog('/profile', [function(session){
+    builder.Prompts.text(session, 'Hi! What is your name?');
+},
+function(session, results){
+    session.userData.name = results.response;
+    session.endDialog();
+}]);
+
+bot.dialog('/gender', [function(session){
+    builder.Prompts.choice(session, 'What is your gender?', ['male', 'female']);
+},
+function(session, results){
+    session.userData.gender = results.response;
+    session.endDialog();
+}]);
+
+bot.dialog('/age', [function(session){
+    builder.Prompts.number(session, 'How old are you?');
+},
+function(session, results){
+    session.userData.age = results.response;
+    session.endDialog();
+}]);
+
+bot.dialog('/', [function (session, args, next) {
+    if(!session.userData.name){
+        session.beginDialog('/profile');
+    } else {
+        next();
+    }
+},
+function(session, results, next) {
+    if(!session.userData.gender){
+        session.beginDialog('/gender');
+    } else {
+        next();
+    }
+},
+function(session, results, next) {
+    if(!session.userData.age){
+        session.beginDialog('/age');
+    } else {
+        next();
+    }
+},
+function(session, results){
+    session.send('Hello %s!', session.userData.name);
+}]);
