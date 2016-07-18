@@ -8,8 +8,8 @@ var fs = require('fs');
 
 // Setup Restify Server
 var server = restify.createServer({
-    certificate: fs.readFileSync('cert/localhost.crt'),
-    key: fs.readFileSync('cert/localhost.key')
+    certificate: fs.readFileSync('cert/instflow.org.crt'),
+    key: fs.readFileSync('cert/instflow.org.key')
 });
 server.listen(process.env.port || process.env.PORT || 3978, function () {
    console.log('%s listening to %s', server.name, server.url); 
