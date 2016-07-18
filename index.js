@@ -51,7 +51,21 @@ function(session, results){
     session.endDialog();
 }]);
 
-bot.dialog('/', [function (session, args, next) {
+bot.dialog('/', function(session){
+    var message = new builder.Message(session);
+    var heroCard = new builder.HeroCard(session);
+    heroCard.title('Main title');
+    heroCard.subtitle('Sub title');
+    heroCard.text('This is a piece of text');
+    var cardImage = new builder.CardImage.create(session, 'https://github.com/codemeow5/Scripts/raw/master/avatar.jpg');
+    heroCard.images([cardImage]);
+    var cardAction = new builder.CardAction.openUrl(session, 'http://www.baidu.com', 'Open Baidu');
+    heroCard.buttons([cardAction]);
+    message.addAttachment(heroCard.toAttachment());
+    session.send(message);
+});
+
+bot.dialog('/temp', [function (session, args, next) {
     if(!session.userData.name){
         session.beginDialog('/profile');
     } else {
