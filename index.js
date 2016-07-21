@@ -52,6 +52,17 @@ function(session, results){
 }]);
 
 bot.dialog('/', function(session){
+    if(session.message != undefined && session.message.address != undefined){
+        var address = session.message.address;
+        setTimeout(function(){
+            connector.startConversation(address, function(err, address){
+                var message = new builder.Message(session);
+                message.address = address;
+                message.text('You have a new message');
+                bot.send(message);
+            })
+        }, 10000);
+    }
     var message = new builder.Message(session);
     var heroCard = new builder.HeroCard(session);
     heroCard.title('Main title');

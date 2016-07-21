@@ -12,7 +12,7 @@
   "author": "CodeMeow",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "botbuilder": "^3.0.1",
+    "botbuilder": "^3.1.1",
     "botbuilder-calling": "^3.0.0",
     "restify": "^4.1.1"
   },
