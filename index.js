@@ -51,7 +51,7 @@ function(session, results){
     session.endDialog();
 }]);
 
-bot.dialog('/', function(session){
+bot.dialog('/temp', function(session){
     if(session.message != undefined && session.message.address != undefined){
         var address = session.message.address;
         setTimeout(function(){
@@ -76,7 +76,7 @@ bot.dialog('/', function(session){
     session.send(message);
 });
 
-bot.dialog('/temp', [function (session, args, next) {
+bot.dialog('/', [function (session, args, next) {
     if(!session.userData.name){
         session.beginDialog('/profile');
     } else {
