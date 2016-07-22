@@ -51,15 +51,20 @@ function(session, results){
     session.endDialog();
 }]);
 
-bot.dialog('/temp', function(session){
+bot.dialog('/push', function(session){
+    session.send('You have a message!');
+});
+
+bot.dialog('/', function(session){
     if(session.message != undefined && session.message.address != undefined){
         var address = session.message.address;
         setTimeout(function(){
             connector.startConversation(address, function(err, address){
-                var message = new builder.Message(session);
-                message.address = address;
-                message.text('You have a new message');
-                bot.send(message);
+                bot.beginDialog(address, '/push');
+                //var message = new builder.Message(session);
+                //message.address = address;
+                //message.text('You have a new message');
+                //bot.send(message);
             })
         }, 10000);
     }
@@ -76,7 +81,7 @@ bot.dialog('/temp', function(session){
     session.send(message);
 });
 
-bot.dialog('/', [function (session, args, next) {
+bot.dialog('/temp', [function (session, args, next) {
     if(!session.userData.name){
         session.beginDialog('/profile');
     } else {
