@@ -19,7 +19,7 @@ exports.ProactiveLibrary = (function(){
 
 exports.SubscribeLibrary = (function(){
     var lib = new builder.Library('subscribe');
-    lib.dialog('/', function(session, args, next){
+    lib.dialog('/root', function(session, args, next){
         var u = url.parse(session.message.text);
         var qs = querystring.parse(u.query);
         if(u.pathname != 'action'){
@@ -46,7 +46,7 @@ exports.SubscribeLibrary = (function(){
 exports.HedwigLibrary = (function(){
     var lib = new builder.Library('hedwig');
     lib.library(this.SubscribeLibrary);
-    lib.dialog('/welcome', new builder.SimpleDialog(function(session){
+    lib.dialog('/welcome', [function(session, args, next){
         var message = new builder.Message(session);
         var thumbnail = {
             'contentType': 'image/jpeg',
@@ -62,8 +62,13 @@ exports.HedwigLibrary = (function(){
             message.text('First of all, I need you to provide some information in order to better serve you :)');
             session.send(message);
             session.beginDialog('/profile');
+        } else {
+            next();
         }
-    }));
+    },
+    function(session, results){
+        session.endDialog();
+    }]);
     lib.dialog('/askName', [function(session, args, next){
         builder.Prompts.text(session, 'Could I have your name please?');
     }, 
@@ -80,12 +85,13 @@ exports.HedwigLibrary = (function(){
         }
     },
     function(session, results, next){
-        session.beginDialog('subscribe:/');
+        session.beginDialog('subscribe:/root');
     },
     function(session, results, next){
         session.send('Thank you for your cooperation, I will provide you with the latest information on time.');
+        session.endDialog();
     }]);
-    lib.dialog('/', function(session){
+    lib.dialog('/root', function(session){
         // TODO check whether user is first log in
         if(utils.checkFirstLogin(session.userData)){
             session.beginDialog('/welcome');

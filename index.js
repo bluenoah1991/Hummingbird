@@ -35,5 +35,5 @@ server.post('/api/messages', connector.listen());
 bot.library(libs.HedwigLibrary);
 
 bot.dialog('/', function(session){
-    session.beginDialog('hedwig:/');
+    session.beginDialog('hedwig:/root');
 });
