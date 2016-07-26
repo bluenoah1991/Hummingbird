@@ -37,3 +37,7 @@ bot.library(libs.HedwigLibrary);
 bot.dialog('/', function(session){
     session.beginDialog('hedwig:/root');
 });
+
+bot.on('contactRelationUpdate', function(event){
+    bot.beginDialog(event.address, 'hedwig:/root');
+});
