@@ -14,7 +14,8 @@
   "dependencies": {
     "botbuilder": "^3.1.1",
     "botbuilder-calling": "^3.0.0",
-    "restify": "^4.1.1"
+    "restify": "^4.1.1",
+    "sugar": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
