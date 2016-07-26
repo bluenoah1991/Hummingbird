@@ -50,7 +50,7 @@ exports.HedwigLibrary = (function(){
         var message = new builder.Message(session);
         var thumbnail = {
             'contentType': 'image/jpeg',
-            'contentUrl': 'http://cdn.ltstatic.com/2015/January/AZ357599_942long.jpg'
+            'contentUrl': 'https://github.com/codemeow5/InstFlow/raw/master/hedwig.jpg'
         };
         message.addAttachment(thumbnail);
         message.text([
