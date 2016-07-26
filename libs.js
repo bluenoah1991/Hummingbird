@@ -46,7 +46,7 @@ exports.SubscribeLibrary = (function(){
 exports.HedwigLibrary = (function(){
     var lib = new builder.Library('hedwig');
     lib.library(this.SubscribeLibrary);
-    lib.dialog('/welcome', [function(session, args, next){
+    lib.dialog('/welcome', function(session, args, next){
         var message = new builder.Message(session);
         var thumbnail = {
             'contentType': 'image/jpeg',
@@ -57,18 +57,8 @@ exports.HedwigLibrary = (function(){
             'Hi there, I am Hedwig. I will provide you with the most up-to-date information.'
         ]);
         session.send(message);
-        if(utils.checkFirstLogin(session.userData)){
-            var message = new builder.Message(session);
-            message.text('First of all, I need you to provide some information in order to better serve you :)');
-            session.send(message);
-            session.beginDialog('/profile');
-        } else {
-            next();
-        }
-    },
-    function(session, results){
         session.endDialog();
-    }]);
+    });
     lib.dialog('/askName', [function(session, args, next){
         builder.Prompts.text(session, 'Could I have your name please?');
     }, 
@@ -102,7 +92,9 @@ exports.HedwigLibrary = (function(){
         }
         // TODO check whether user is first log in
         if(utils.checkFirstLogin(session.userData)){
-            session.beginDialog('/welcome');
+            session.send('Welcome to Owl Push Service :)');
+            session.send('I am Hedwig. First of all, I need you to provide some information in order to better serve you.');
+            session.beginDialog('/profile');
         } else {
             session.send('I will provide you with the latest information on time :)');
         }
