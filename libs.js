@@ -92,6 +92,14 @@ exports.HedwigLibrary = (function(){
         session.endDialog();
     }]);
     lib.dialog('/root', function(session){
+        // Hack
+        if(session.message.text == 'delete'){
+            for(var m in session.userData){
+                delete session.userData[m];
+            }
+            session.send('Delete success!');
+            return;
+        }
         // TODO check whether user is first log in
         if(utils.checkFirstLogin(session.userData)){
             session.beginDialog('/welcome');
