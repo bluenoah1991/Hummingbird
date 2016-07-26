@@ -39,5 +39,5 @@ bot.dialog('/', function(session){
 });
 
 bot.on('contactRelationUpdate', function(event){
-    bot.beginDialog(event.address, 'hedwig:/root');
+    bot.beginDialog(event.address, 'hedwig:/welcome');
 });
