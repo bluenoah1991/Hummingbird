@@ -1,2 +1,2 @@
 # InstFlow
-Skype robot
+Skype bot
