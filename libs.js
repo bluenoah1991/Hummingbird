@@ -5,7 +5,6 @@ var url = require('url');
 var querystring = require('querystring');
 var utils = require('./utils');
 var cards = require('./cards');
-var category = require('./category');
 
 // define all dialogs
 
@@ -93,7 +92,7 @@ exports.HedwigLibrary = (function(){
         // TODO check whether user is first log in
         if(utils.checkFirstLogin(session.userData)){
             session.send('Welcome to Owl Push Service :)');
-            session.send('I am Hedwig. First of all, I need you to provide some information in order to better serve you.');
+            session.send('I am Hedwig. First of all, I need you to provide some information in order to serve you better.');
             session.beginDialog('/profile');
         } else {
             session.send('I will provide you with the latest information on time :)');

@@ -1,7 +1,6 @@
 "use strict";
 
 var builder = require('botbuilder');
-var category = require('./category');
 
 exports.SubscribeCard = function(session){
     var buttons = [];
