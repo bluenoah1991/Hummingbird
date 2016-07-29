@@ -23,7 +23,51 @@ exports.ProfileLibrary = (function(){
     var lib = new builder.Library('profile');
     lib.dialog('/root', new builder.SimpleDialog(function(session){
         var id = session.message.user.id;
+        models.User.findOne({id: id})
+            .then(function(doc){
+                if(!doc){
+                    return models.User.create({
+                        id: id, 
+                        user: session.message.user, 
+                        address: session.message.address});
+                } else {
+                    return doc;
+                }
+            })
+            .then(function(doc){
+                session.userData.profile = doc;
+                session.endDialogWithResult({
+                    resumed: builder.ResumeReason.completed, 
+                    response: doc, 
+                    childId: session.curDialog().id 
+                });
+            });
     }));
+    lib.dialog('/check', new builder.SimpleDialog(function(session){
+        var id = session.message.user.id;
+        models.User.findOne({id: id})
+            .then(function(doc){
+                // TODO check subscribe state
+                session.endDialogWithResult({ 
+                    resumed: builder.ResumeReason.completed, 
+                    response: !!doc, 
+                    childId: session.curDialog().id 
+                });
+            });
+    }));
+    lib.dialog('/delete', new builder.SimpleDialog(function(session){
+        var id = session.message.user.id;
+        // TODO delete relation data
+        models.User.remove({id: id}).exec()
+            .then(function(){
+                session.endDialogWithResult({ 
+                    resumed: builder.ResumeReason.completed, 
+                    response: true, 
+                    childId: session.curDialog().id 
+                });
+            });
+    }));
+    return lib;
 }.bind(this))();
 
 exports.SubscribeLibrary = (function(){
@@ -62,6 +106,7 @@ exports.SubscribeLibrary = (function(){
 exports.HedwigLibrary = (function(){
     var lib = new builder.Library('hedwig');
     lib.library(this.SubscribeLibrary);
+    lib.library(this.ProfileLibrary);
     lib.dialog('/welcome', function(session, args, next){
         var message = new builder.Message(session);
         var thumbnail = {
@@ -79,12 +124,19 @@ exports.HedwigLibrary = (function(){
         builder.Prompts.text(session, 'Could I have your name please?');
     }, 
     function(session, results){
-        session.userData.name = results.response;
-        session.endDialog();
+        session.userData.profile.name = results.response;
+        models.User.update({id: session.userData.profile.id}, {name: results.response}).exec()
+            .then(function(raw){
+                session.endDialog();
+            });
     }]);
-    lib.dialog('/profile', [function(session, args, next){
-        if(session.userData.name == undefined ||
-            session.userData.name.length == 0){
+    lib.dialog('/profile', [function(session){
+        session.beginDialog('profile:/root');
+    },
+    function(session, results, next){
+        //session.userData.profile = results.response;
+        if(session.userData.profile.name == undefined ||
+            session.userData.profile.name.length == 0){
             session.beginDialog('/askName');
         } else {
             next();
@@ -97,23 +149,33 @@ exports.HedwigLibrary = (function(){
         session.send('Thank you for your cooperation, I will provide you with the latest information on time.');
         session.endDialog();
     }]);
-    lib.dialog('/root', function(session){
+    lib.dialog('/root', [function(session){
         // Hack
-        if(session.message.text == 'delete'){
+        if(session.message.text == 'd'){
             for(var m in session.userData){
                 delete session.userData[m];
             }
             session.send('Delete success!');
             return;
         }
-        // TODO check whether user is first log in
-        if('name' in session.userData){
-            session.send('I will provide you with the latest information on time :)');
+        if(session.message.text == 'dd'){
+            var id = session.message.user.id;
+            models.User.remove({id: id}).exec()
+                .then(function(){
+                    session.send('Delete database success!');
+                });
+            return;
+        }
+        session.beginDialog('profile:/check');
+    },
+    function(session, results){      
+        if(results.response){
+            session.send(`Hi, ${session.userData.profile.name}. I will provide you with the latest information on time :)`);
         } else {
             session.send('Welcome to Owl Push Service :)');
             session.send('I am Hedwig. First of all, I need you to provide some information in order to serve you better.');
             session.beginDialog('/profile');
         }
-    });
+    }]);
     return lib;
 }.bind(this))();

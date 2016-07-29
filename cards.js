@@ -14,7 +14,7 @@ exports.SubscribeCard = function(session){
             }
             buttons.push(new builder.CardAction.dialogAction(session, 'finish', null, 'Finish'));
             var card = new builder.HeroCard(session)
-                .title(`Hi, ${session.userData.name}. Please tell me about your interest:`)
+                .title(`Hi, ${session.userData.profile.name}. Please tell me about your interest:`)
                 .buttons(buttons);
             return card;
         });

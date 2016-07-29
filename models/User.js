@@ -7,6 +7,7 @@ var Schema = mongoose.Schema;
 module.exports = (function(){
     var UserSchema = new Schema({
         id: String,
+        name: String,
         user: {},
         address: {}
     });
