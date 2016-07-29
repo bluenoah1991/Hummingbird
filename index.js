@@ -9,6 +9,7 @@ var libs = require('./libs');
 // Init Database
 
 var mongoose = require('mongoose');
+mongoose.Promise = require('q').Promise;
 
 var db = mongoose.connection;
 
