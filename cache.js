@@ -4,36 +4,25 @@
 var Q = require('q');
 
 var node_cache = require('node-cache');
+var utils = require('./utils');
 
-exports.Cache = (function(){
-    var instance;
+module.exports = (function(){
 
-    return {
-        getInstance: function(){
-            if(!instance){
-                instance = new node_cache();
-            }
-            return instance;
-        },
-        flush: function(){
-            if(!!instance){
-                instance.flushAll();
-                instance = null;
-            }
-        },
-        close: function(){
-            if(!!instance){
-                instance.close();
-                instance = null;
-            }
-        }
+    function Cache(){
+        this.cache = new node_cache();
+    }
+
+    Cache.prototype.flush = function(){
+        this.cache.flushAll();
     };
-}.bind(this))();
 
-exports.set = (function(){
-    function set(key, val, ttl){
+    Cache.prototype.close = function(){
+        this.cache.close();
+    };
+
+    Cache.prototype.set = function(key, val, ttl){
         var deferred = Q.defer();
-        this.Cache.getInstance().set(key, val, ttl, function(err, success){
+        this.cache.set(key, val, ttl, function(err, success){
             if(err){
                 deferred.reject(err);
             } else {
@@ -41,14 +30,11 @@ exports.set = (function(){
             }
         });
         return deferred.promise;
-    }
-    return set;
-}.bind(this))();
+    };
 
-exports.get = (function(){
-    function get(key){
+    Cache.prototype.get = function(key){
         var deferred = Q.defer();
-        this.Cache.getInstance().get(key, function(err, value){
+        this.cache.get(key, function(err, value){
             if(err){
                 deferred.reject(err);
             } else {
@@ -56,14 +42,11 @@ exports.get = (function(){
             }
         });
         return deferred.promise;
-    }
-    return get;
-}.bind(this))();
+    };
 
-exports.mget = (function(){
-    function mget(keys){
+    Cache.prototype.mget = function(keys){
         var deferred = Q.defer();
-        this.Cache.getInstance().mget(keys, function(err, value){
+        this.cache.mget(keys, function(err, value){
             if(err){
                 deferred.reject(err);
             } else {
@@ -71,14 +54,11 @@ exports.mget = (function(){
             }
         });
         return deferred.promise;
-    }
-    return mget;
-}.bind(this))();
+    };
 
-exports.del = (function(){
-    function del(key){
+    Cache.prototype.del = function(key){
         var deferred = Q.defer();
-        this.Cache.getInstance().del(key, function(err, count){
+        this.cache.del(key, function(err, count){
             if(err){
                 deferred.reject(err);
             } else {
@@ -86,14 +66,11 @@ exports.del = (function(){
             }
         });
         return deferred.promise;
-    }
-    return del;
-}.bind(this))();
+    };
 
-exports.ttl = (function(){
-    function ttl(key, ttl){
+    Cache.prototype.ttl = function(key, ttl){
         var deferred = Q.defer();
-        this.Cache.getInstance().ttl(key, ttl, function(err, changed){
+        this.cache.ttl(key, ttl, function(err, changed){
             if(err){
                 deferred.reject(err);
             } else {
@@ -101,14 +78,11 @@ exports.ttl = (function(){
             }
         });
         return deferred.promise;
-    }
-    return ttl;
-}.bind(this))();
+    };
 
-exports.getTtl = (function(){
-    function getTtl(key){
+    Cache.prototype.getTtl = function(key){
         var deferred = Q.defer();
-        this.Cache.getInstance().getTtl(key, function(err, ts){
+        this.cache.getTtl(key, function(err, ts){
             if(err){
                 deferred.reject(err);
             } else {
@@ -116,14 +90,11 @@ exports.getTtl = (function(){
             }
         });
         return deferred.promise;
-    }
-    return getTtl;
-}.bind(this))();
+    };
 
-exports.keys = (function(){
-    function keys(){
+    Cache.prototype.keys = function(){
         var deferred = Q.defer();
-        this.Cache.getInstance().keys(function(err, keys){
+        this.cache.keys(function(err, keys){
             if(err){
                 deferred.reject(err);
             } else {
@@ -131,34 +102,24 @@ exports.keys = (function(){
             }
         });
         return deferred.promise;
-    }
-    return keys;
-}.bind(this))();
+    };
 
-exports.onSet = (function(){
-    function onSet(callback){// callback args : key, value
+    Cache.prototype.onSet = function(callback){// callback args : key, value
         this.Cache.getInstance().on('set', callback);
-    }
-    return onSet;
-}.bind(this))();
+    };
 
-exports.onDel = (function(){
-    function onDel(callback){
+    Cache.prototype.onDel = function(callback){
         this.Cache.getInstance().on('del', callback);
-    }
-    return onDel;
-}.bind(this))();
+    };
 
-exports.onExpired = (function(){
-    function onExpired(callback){
+    Cache.prototype.onExpired = function(callback){
         this.Cache.getInstance().on('expired', callback);
-    }
-    return onExpired;
+    };
+
+    Cache.prototype.onFlush = function(callback){
+        this.Cache.getInstance().on('flush', callback);
+    };
+
+    return Cache;
 }.bind(this))();
 
-exports.onFlush = (function(){
-    function onFlush(callback){
-        this.Cache.getInstance().on('flush', callback);
-    }
-    return onFlush;
-}.bind(this))();

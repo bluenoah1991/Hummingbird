@@ -1,10 +1,13 @@
 "use strict";
 
+var _ = require('underscore');
+
 var builder = require('botbuilder');
 var url = require('url');
 var querystring = require('querystring');
 var utils = require('./utils');
 var cards = require('./cards');
+var models = require('./models');
 
 // define all dialogs
 
@@ -16,6 +19,13 @@ exports.ProactiveLibrary = (function(){
     return lib;
 }.bind(this))();
 
+exports.ProfileLibrary = (function(){
+    var lib = new builder.Library('profile');
+    lib.dialog('/root', new builder.SimpleDialog(function(session){
+        var id = session.message.user.id;
+    }));
+}.bind(this))();
+
 exports.SubscribeLibrary = (function(){
     var lib = new builder.Library('subscribe');
     lib.dialog('/root', function(session, args, next){
@@ -23,16 +33,23 @@ exports.SubscribeLibrary = (function(){
         var qs = querystring.parse(u.query);
         if(u.pathname != 'action'){
             var message = new builder.Message(session);
-            message.addAttachment(new cards.SubscribeCard(session));
-            session.send(message);
+            cards.SubscribeCard(session).then(function(card){
+                message.addAttachment(card);
+                session.send(message);
+            });
         } else {
             for(var action in qs){
                 if(action == 'new'){
                     var name = qs[action];
                     // TODO save subscribe
-                    var message = new builder.Message(session);
-                    message.text(`You subscribe to the ${category[name].title} news`);
-                    session.send(message);
+                    models.Category.findOne({id: name})
+                        .then(function(doc){
+                            if(!doc || !doc.value){
+                                var message = new builder.Message(session);
+                                message.text(`You subscribe to the ${doc.title} news`);
+                                session.send(message);
+                            }
+                        });
                 } else if(action == 'finish'){
                     session.endDialog();
                 }
@@ -58,7 +75,7 @@ exports.HedwigLibrary = (function(){
         session.send(message);
         session.endDialog();
     });
-    lib.dialog('/askName', [function(session, args, next){
+    lib.dialog('/askName', [function(session){
         builder.Prompts.text(session, 'Could I have your name please?');
     }, 
     function(session, results){
@@ -90,12 +107,12 @@ exports.HedwigLibrary = (function(){
             return;
         }
         // TODO check whether user is first log in
-        if(utils.checkFirstLogin(session.userData)){
+        if('name' in session.userData){
+            session.send('I will provide you with the latest information on time :)');
+        } else {
             session.send('Welcome to Owl Push Service :)');
             session.send('I am Hedwig. First of all, I need you to provide some information in order to serve you better.');
             session.beginDialog('/profile');
-        } else {
-            session.send('I will provide you with the latest information on time :)');
         }
     });
     return lib;

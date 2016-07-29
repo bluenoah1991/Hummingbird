@@ -6,8 +6,23 @@ var fs = require('fs');
 
 var libs = require('./libs');
 
-var seeds = require('./seeds');
-seeds();
+// Init Database
+
+var mongoose = require('mongoose');
+
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log('connected!');
+
+    // Seeds
+
+    var seeds = require('./seeds');
+    seeds();
+});
+
+mongoose.connect('mongodb://localhost:27017/instflow');
 
 //=========================================================
 // Bot Setup
