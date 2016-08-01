@@ -89,9 +89,21 @@ exports.SubscribeLibrary = (function(){
                     models.Category.findOne({id: name})
                         .then(function(doc){
                             if(!doc || !doc.value){
-                                var message = new builder.Message(session);
-                                message.text(`You subscribe to the ${doc.title} news`);
-                                session.send(message);
+                                var id = session.message.user.id;
+                                models.User.findOne({id: id})
+                                    .then(function(doc){
+                                        if(doc != undefined && !_.find(doc.subscribes, _.matcher({category: name}))){
+                                            doc.subscribes.push({
+                                                category: name
+                                            });
+                                            return doc.save();
+                                        }
+                                    })
+                                    .then(function(){
+                                        var message = new builder.Message(session);
+                                        message.text(`You subscribe to the ${doc.title} news`);
+                                        session.send(message);
+                                    });
                             }
                         });
                 } else if(action == 'finish'){
