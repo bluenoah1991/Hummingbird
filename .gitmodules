@@ -1,0 +1,3 @@
+[submodule "vendor/rss-parser"]
+	path = vendor/rss-parser
+	url = https://github.com/codemeow5/rss-parser.git

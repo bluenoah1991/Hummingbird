@@ -21,6 +21,11 @@ db.once('open', function() {
 
     var seeds = require('./seeds');
     seeds();
+
+    // test source
+
+    var Resource = require('./resource');
+    Resource.all(['top', 'world']);
 });
 
 mongoose.connect('mongodb://localhost:27017/instflow');
