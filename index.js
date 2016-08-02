@@ -20,7 +20,26 @@ var server = restify.createServer({
 server.listen(process.env.port || process.env.PORT || 3978, function () {
    console.log('%s listening to %s', server.name, server.url); 
 });
-  
+
+// Set queryParser
+server.use(restify.queryParser());
+
+// Set timeout
+server.use(function (req, res, next) {
+    req.connection.setTimeout(600 * 1000);
+    res.connection.setTimeout(600 * 1000);
+    next();
+});
+
+// Redirect service
+server.get('/r', function(req, res, next){
+    if('u' in req.query){
+        res.redirect(req.query.u, next);
+    } else {
+        res.redirect('https://www.instflow.org', next);
+    }
+});
+
 // Create chat bot
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,

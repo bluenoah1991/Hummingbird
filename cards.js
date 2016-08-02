@@ -2,6 +2,7 @@
 
 var builder = require('botbuilder');
 var models = require('./models');
+var utils = require('./utils');
 
 exports.SubscribeCard = function(session){
 
@@ -25,12 +26,13 @@ exports.NewsCard = function(session, entry){
 
     var images = [new builder.CardImage(session)
         .url(entry.thumbnail)];
-    var tap = builder.CardAction
-        .openUrl(session, entry.link);
+    var action = builder.CardAction
+        .openUrl(session, utils.build_redirect_url(entry.link), 'Open');
     var card = new builder.HeroCard(session)
         .images(images)
         .title(entry.title)
-        .tap(tap);
+        .buttons([action])
+        .tap(action);
     return card;
 
 };
