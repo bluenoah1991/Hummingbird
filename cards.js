@@ -25,12 +25,12 @@ exports.NewsCard = function(session, entry){
 
     var images = [new builder.CardImage(session)
         .url(entry.thumbnail)];
-    var buttons = [builder.CardAction
-        .openUrl(session, entry.link, 'Read')];
+    var tap = builder.CardAction
+        .openUrl(session, entry.link);
     var card = new builder.HeroCard(session)
         .images(images)
         .title(entry.title)
-        .buttons(buttons);
+        .tap(tap);
     return card;
-    
+
 };
