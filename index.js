@@ -5,30 +5,8 @@ var builder = require('botbuilder');
 var fs = require('fs');
 
 var libs = require('./libs');
-
-// Init Database
-
-var mongoose = require('mongoose');
-mongoose.Promise = require('q').Promise;
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-    console.log('connected!');
-
-    // Seeds
-
-    var seeds = require('./seeds');
-    seeds();
-
-    // test source
-
-    var Resource = require('./resource');
-    Resource.all(['top', 'world']);
-});
-
-mongoose.connect('mongodb://localhost:27017/instflow');
+var tasks = require('./tasks');
+var Scheduler = require('./scheduler');
 
 //=========================================================
 // Bot Setup
@@ -65,3 +43,31 @@ bot.dialog('/', function(session){
 bot.on('contactRelationUpdate', function(event){
     bot.beginDialog(event.address, 'hedwig:/welcome');
 });
+
+// Bootstrap
+
+var mongoose = require('mongoose');
+mongoose.Promise = require('q').Promise;
+
+var db = mongoose.connection;
+var scheduler = new Scheduler();
+var task = new tasks.LoopTask(bot, connector);
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log('Successfully connected to Mongodb!');
+
+    // Seeds
+
+    var Seeds = require('./seeds');
+    Seeds.fillWithDropDb(this.db)
+        .then(function(){
+            // background loop
+
+            var callback = task.start.bind(task);
+            scheduler.loop(2, callback);
+        });
+
+}.bind(db));
+
+mongoose.connect('mongodb://localhost:27017/instflow');

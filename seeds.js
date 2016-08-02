@@ -4,6 +4,17 @@ var models = require('./models');
 
 module.exports = (function(){
     function Seeds(){
+
+    }
+
+    Seeds.fillWithDropDb = function(db){
+        return db.dropDatabase()
+            .then(function(){
+                return Seeds.fill();
+            });
+    };
+
+    Seeds.fill = function(){
         var seeds = [
             {id: 'top', title: 'Top Stories', source: 'http://feeds.bbci.co.uk/news/rss.xml'},
             {id: 'world', title: 'World', source: 'http://feeds.bbci.co.uk/news/world/rss.xml'},
@@ -16,7 +27,7 @@ module.exports = (function(){
             {id: 'entertainment_and_arts', title: 'Entertainment & Arts', source: 'http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml'}
         ];
 
-        models.Settings.findOne({id: 'seed'})
+        return models.Settings.findOne({id: 'seed'})
             .then(function(doc){
                 if(!doc || !doc.value){
                     return new models.Settings({id: 'seed', value: true}).save()
@@ -29,8 +40,9 @@ module.exports = (function(){
                 console.log(err);
             })
             .then(function(){
-                console.log('done!');
+                console.log('Seed data has been filled!');
             });
-    }
+    };
+
     return Seeds;
 })();

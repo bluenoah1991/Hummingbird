@@ -15,6 +15,11 @@ exports.ProactiveLibrary = (function(){
     var lib = new builder.Library('proactive');
     lib.dialog('/send', new builder.SimpleDialog(function(session, message){
         session.send(message);
+        session.sendBatch();
+    }));
+    lib.dialog('/sendUseCallback', new builder.SimpleDialog(function(session, callback){
+        session.send(callback(session));
+        session.sendBatch();
     }));
     return lib;
 }.bind(this))();
@@ -119,6 +124,7 @@ exports.HedwigLibrary = (function(){
     var lib = new builder.Library('hedwig');
     lib.library(this.SubscribeLibrary);
     lib.library(this.ProfileLibrary);
+    lib.library(this.ProactiveLibrary);
     lib.dialog('/welcome', function(session, args, next){
         var message = new builder.Message(session);
         var thumbnail = {

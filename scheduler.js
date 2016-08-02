@@ -9,9 +9,15 @@ module.exports = (function(){
 
     }
 
-    Scheduler.start = function(){
-        
+    Scheduler.prototype.loop = function(interval, callback){
+        interval = interval == undefined ? 3 : interval;
+        var rule = `*/${interval} * * * *`;
+        this.j = schedule.scheduleJob(rule, callback);
     };
+
+    Scheduler.prototype.cancel = function(){
+        this.j.cancel();
+    }
 
     return Scheduler;
 })();

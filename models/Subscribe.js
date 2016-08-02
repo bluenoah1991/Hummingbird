@@ -6,7 +6,8 @@ var Schema = mongoose.Schema;
 
 module.exports = (function(){
     var SubscribeSchema = new Schema({
-        category: String
+        category: String,
+        timestamp: String
     });
     return SubscribeSchema;
 })();

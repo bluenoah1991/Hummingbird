@@ -35,7 +35,7 @@ module.exports = (function(){
 					);
 					lastTimeStamp = today.getTime();
 				} else {
-					lastTimeStamp = lastTimeStamp_.value;
+					lastTimeStamp = parseInt(lastTimeStamp_.value);
 				}
 				return _.map(docs, _.partial(Resource.recent, _, lastTimeStamp));
 			})
@@ -47,11 +47,15 @@ module.exports = (function(){
 						return entries.max('timestamp').value();
 					})
 					.max('timestamp').value();
-				return models.Settings.update({id: 'lastTimeStamp'}, 
-					{value: lastEntry.timestamp}, {upsert: true})
-					.then(function(raw){
-						return result;
-					});
+				if(_.isObject(lastEntry)){
+					return models.Settings.update({id: 'lastTimeStamp'}, 
+						{value: lastEntry.timestamp}, {upsert: true})
+						.then(function(raw){
+							return result;
+						});
+				} else {
+					return result;
+				}
 			});
 	}
 
@@ -81,7 +85,7 @@ module.exports = (function(){
 				}
 				return {
 					category: category, 
-					entries: chain.sortBy('timestamp')
+					entries: chain.sortBy('timestamp').last(5)
 				};
 			})
 			.catch(function(err){
