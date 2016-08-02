@@ -64,7 +64,7 @@ exports.LoopTask = (function(){
             if(_.isObject(lastEntry)){
                 subscribe.timestamp = lastEntry.timestamp;
                 subscribe.parent().save().then(function(doc){
-                    console.log(`ok`);
+                    console.log(`Update subscription time stamp that user '${doc.name}'`);
                 });
             }
         }.bind(new Conversation(doc, this.bot, this.connector)));
