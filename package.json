@@ -19,6 +19,7 @@
     "mongoose": "^4.5.7",
     "mongoose-schema-extend": "^0.2.2",
     "node-cache": "^3.2.1",
+    "node-schedule": "^1.1.1",
     "q": "^1.4.1",
     "restify": "^4.1.1",
     "sugar": "^2.0.0",
