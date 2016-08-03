@@ -19,7 +19,10 @@ exports.LoopTask = (function(){
         console.log(`Loop task start running (${new Date().toString()})`);
         this.feedsMap().then(function(feedsMap){
             var cursor = models.User.find({}).cursor();
-            cursor.next(_.bind(_.partial(this.next, feedsMap), this));
+            cursor.on('data', _.bind(_.partial(this.next, feedsMap), this));
+            cursor.on('end', function(){
+                console.log(`Check finished (${new Date().toString()})`);
+            });
         }.bind(this));
     };
 
@@ -33,11 +36,11 @@ exports.LoopTask = (function(){
         });
     };
 
-    LoopTask.prototype.next = function(feedsMap, err, doc){
-        if(err != undefined || doc == undefined){
+    LoopTask.prototype.next = function(feedsMap, doc){
+        if(doc == undefined){
             return;
         }
-        console.log(`Check user '${doc.name}'`);
+        console.log(`Check user '${doc.name}' (${new Date().toString()})`);
         _.each(doc.subscribes, function(subscribe){
             var entries = feedsMap[subscribe.category];
             if(entries == undefined){
