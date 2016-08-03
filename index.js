@@ -4,6 +4,7 @@ var restify = require('restify');
 var builder = require('botbuilder');
 var fs = require('fs');
 
+var config = require('./config');
 var libs = require('./libs');
 var tasks = require('./tasks');
 var Scheduler = require('./scheduler');
@@ -18,8 +19,11 @@ var server = restify.createServer({
     key: fs.readFileSync('cert/instflow.org.key')
 });
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url); 
+    console.log('%s listening to %s', server.name, server.url); 
 });
+
+// Support gzip
+server.use(restify.gzipResponse());
 
 // Set queryParser
 server.use(restify.queryParser());
@@ -27,7 +31,6 @@ server.use(restify.queryParser());
 // Set timeout
 server.use(function (req, res, next) {
     req.connection.setTimeout(600 * 1000);
-    res.connection.setTimeout(600 * 1000);
     next();
 });
 
@@ -39,6 +42,12 @@ server.get('/r', function(req, res, next){
         res.redirect('https://www.instflow.org', next);
     }
 });
+
+// Serve static images
+server.get(/\/static\/images\/?.*/, restify.serveStatic({
+    directory: '../InstFlow', // TODO Issue on windows platform
+    default: 'default.jpg'
+}));
 
 // Create chat bot
 var connector = new builder.ChatConnector({
@@ -84,6 +93,9 @@ db.once('open', function() {
             // background loop
 
             var callback = task.start.bind(task);
+            if(config.LOOP_TASK_BOOT_EXEC){
+                callback();
+            }
             scheduler.loop(2, callback);
         });
 

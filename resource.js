@@ -7,6 +7,7 @@ var _ = require('underscore');
 var rss = require('rss-parser');
 
 var models = require('./models');
+var Image = require('./images');
 
 module.exports = (function(){
 	function Resource(){
@@ -74,23 +75,60 @@ module.exports = (function(){
 		return Q.nfcall(rss.parseURL, category.source)
 			.then(function(doc){
 				var chain = _.chain(doc.feed.entries)
-					.map(function(entry){
+					.each(function(entry){
 						entry.timestamp = Date.parse(entry.pubDate);
-						return entry;
 					});
 				if(lastTimeStamp != undefined){
 					chain = chain.filter(function(entry){
 						return entry.timestamp > lastTimeStamp;
 					});
 				}
+				chain = chain.sortBy('timestamp').last(5);
+				var spreads = Resource.processThumbnail(chain);
+				return Q.all(spreads);
+			})
+			.then(function(entires){
 				return {
 					category: category, 
-					entries: chain.sortBy('timestamp').last(5)
+					entries: _.chain(entires)
 				};
 			})
 			.catch(function(err){
 				console.log(err);
 			});
+	};
+
+	Resource.processThumbnail = function(entries){
+		return entries.map(function(entry){
+			if(entry.thumbnail == undefined){
+				return entry;
+			}
+
+			// Debug
+			// if(global.JUST_ONCE != undefined){
+			// 	return;
+			// }
+			// global.JUST_ONCE = true;
+			// var image = new Image(
+			// 	'http://img3.duitang.com/uploads/item/201404/23/20140423181756_j2ZXn.jpeg'
+			// );
+
+			var image = new Image(
+				entry.thumbnail, 
+				entry.thumbnailWidth, 
+				entry.thumbnailHeight
+			);
+			return image.resizeBaseAspectRatio(16, 9)
+				.then(function(info){
+					entry.thumbnail = info.link;
+					entry.thumbnailWidth = info.width;
+					entry.thumbnailHeight = info.height;
+					return entry;
+				})
+				.catch(function(err){
+					return entry;
+				});
+		}).value();
 	};
 
 	return Resource;
