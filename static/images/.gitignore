@@ -4,3 +4,4 @@
 *.gif
 *.bmp
 !default.jpg
+!greeting.jpg

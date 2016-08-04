@@ -8,6 +8,7 @@ var querystring = require('querystring');
 var utils = require('./utils');
 var cards = require('./cards');
 var models = require('./models');
+var config = require('./config');
 
 // define all dialogs
 
@@ -123,9 +124,17 @@ exports.HedwigLibrary = (function(){
     lib.library(this.ProactiveLibrary);
     lib.dialog('/welcome', function(session, args, next){
         var message = new builder.Message(session);
+        var uo = {
+            protocol: 'https',
+            hostname: config.HOSTNAME,
+            port: config.PORT,
+            pathname: '/static/images/',
+        }
+        var link = url.format(uo);
+        link = url.resolve(link, 'greeting.jpg');
         var thumbnail = {
             'contentType': 'image/jpeg',
-            'contentUrl': 'https://github.com/codemeow5/InstFlow/raw/master/hedwig.jpg'
+            'contentUrl': link
         };
         message.addAttachment(thumbnail);
         message.text([
@@ -186,7 +195,7 @@ exports.HedwigLibrary = (function(){
         if(results.response){
             session.send(`Hi, ${session.userData.profile.name}. I will provide you with the latest information on time :)`);
         } else {
-            session.send('Welcome to Owl Push Service :)');
+            session.send('Welcome to Owl Media Online :)');
             session.send('I am Hedwig. First of all, I need you to provide some information in order to serve you better.');
             session.beginDialog('/profile');
         }
