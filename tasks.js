@@ -56,11 +56,9 @@ exports.LoopTask = (function(){
                 return entry.timestamp > timestamp;
             }).each(function(entry){
                 console.log(`Send message '${entry.title}' to user '${this.user.name}'`);
-                this.sendMessageUseCallback(function(session){
-                    var message = new builder.Message(session);
-                    message = cards.NewsCard(session, message, this);
-    	            return message;
-                }.bind(entry));// TODO complex message
+                this.sendMessage(_.partial(function(session, entry){
+                    session.send(`${entry.title} ${entry.link}`);
+                }, _, entry));// TODO complex message
             }.bind(this))
             .max('timestamp').value();
             if(_.isObject(lastEntry)){

@@ -7,17 +7,10 @@ module.exports = (function(){
         this.connector = connector;
     }
 
-    Conversation.prototype.sendMessage = function(message){
+    Conversation.prototype.sendMessage = function(callback){
         this.connector.startConversation(
             this.user.address, function(err, address){
-                this.bot.beginDialog(address, 'proactive:/send', message);
-            }.bind(this));
-    };
-
-    Conversation.prototype.sendMessageUseCallback = function(callback){
-        this.connector.startConversation(
-            this.user.address, function(err, address){
-                this.bot.beginDialog(address, 'proactive:/sendUseCallback', callback);
+                this.bot.beginDialog(address, 'proactive:/send', callback);
             }.bind(this));
     };
 

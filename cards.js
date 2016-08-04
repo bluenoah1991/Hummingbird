@@ -22,24 +22,3 @@ exports.SubscribeCard = function(session){
 
 };
 
-exports.NewsCard = function(session, message, entry){
-
-    message.text([
-        entry.link
-    ]);
-
-    return message;
-
-    // var images = [new builder.CardImage(session)
-    //     .url(entry.thumbnail)];
-    // var action = builder.CardAction
-    //     .openUrl(session, utils.build_redirect_url(entry.link), 'Open');
-    // var card = new builder.HeroCard(session)
-    //     .images(images)
-    //     .title(entry.title)
-    //     .buttons([action])
-    //     .tap(action);
-    // message.addAttachment(card.toAttachment());
-    // return message;
-
-};

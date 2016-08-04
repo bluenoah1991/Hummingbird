@@ -13,12 +13,8 @@ var models = require('./models');
 
 exports.ProactiveLibrary = (function(){
     var lib = new builder.Library('proactive');
-    lib.dialog('/send', new builder.SimpleDialog(function(session, message){
-        session.send(message);
-        session.sendBatch();
-    }));
-    lib.dialog('/sendUseCallback', new builder.SimpleDialog(function(session, callback){
-        session.send(callback(session));
+    lib.dialog('/send', new builder.SimpleDialog(function(session, callback){
+        callback(session);
         session.sendBatch();
     }));
     return lib;

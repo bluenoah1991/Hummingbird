@@ -83,9 +83,9 @@ module.exports = (function(){
 						return entry.timestamp > lastTimeStamp;
 					});
 				}
-				chain = chain.sortBy('timestamp').last(5);
-				var spreads = Resource.processThumbnail(chain);
-				return Q.all(spreads);
+				var entries = chain.sortBy('timestamp').last(5).value();
+				return Resource.processEntry(entries);
+				//return Resource.processThumbnail(entries);
 			})
 			.then(function(entires){
 				return {
@@ -98,39 +98,46 @@ module.exports = (function(){
 			});
 	};
 
+	Resource.processEntry = function(entries){
+		return Q.all(_.map(entries, function(entry){
+			return models.Entry.findOne({link: entry.link})
+				.then(function(doc){
+					if(doc != undefined){
+						return null;
+					}
+					return new models.Entry(entry).save()
+						.then(function(doc){
+							return entry;
+						});
+				});
+		}))
+		.then(function(entries){
+			return _.filter(entries, _.isObject);
+		});
+	};
+
 	Resource.processThumbnail = function(entries){
-		return entries.map(function(entry){
+		return Q.all(_.map(entries, function(entry){
 			if(entry.thumbnail == undefined){
 				return entry;
 			}
 
-			// Debug
-			// if(global.JUST_ONCE != undefined){
-			// 	return;
-			// }
-			// global.JUST_ONCE = true;
-			// var image = new Image(
-			// 	'http://img3.duitang.com/uploads/item/201404/23/20140423181756_j2ZXn.jpeg'
-			// );
-
-			return entry;
-
-			// var image = new Image(
-			// 	entry.thumbnail, 
-			// 	entry.thumbnailWidth, 
-			// 	entry.thumbnailHeight
-			// );
-			// return image.resizeBaseAspectRatio(16, 9)
-			// 	.then(function(info){
-			// 		entry.thumbnail = info.link;
-			// 		entry.thumbnailWidth = info.width;
-			// 		entry.thumbnailHeight = info.height;
-			// 		return entry;
-			// 	})
-			// 	.catch(function(err){
-			// 		return entry;
-			// 	});
-		}).value();
+			var image = new Image(
+				entry.thumbnail, 
+				entry.thumbnailWidth, 
+				entry.thumbnailHeight
+			);
+			return image.resizeBaseAspectRatio(16, 9)
+				.then(function(info){
+					entry.thumbnail = info.link;
+					entry.thumbnailWidth = info.width;
+					entry.thumbnailHeight = info.height;
+					return entry;
+				})
+				.catch(function(err){
+					return entry;
+				});
+		}));
 	};
 
 	return Resource;
