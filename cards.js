@@ -22,17 +22,31 @@ exports.SubscribeCard = function(session){
 
 };
 
-exports.NewsCard = function(session, entry){
+exports.NewsCard = function(session, message, entry){
 
-    var images = [new builder.CardImage(session)
-        .url(entry.thumbnail)];
-    var action = builder.CardAction
-        .openUrl(session, utils.build_redirect_url(entry.link), 'Open');
-    var card = new builder.HeroCard(session)
-        .images(images)
-        .title(entry.title)
-        .buttons([action])
-        .tap(action);
-    return card;
+    var thumbnail = {
+        'contentType': 'image/*',
+        'contentUrl': entry.thumbnail,
+        'type': 'openUrl',
+        'value': utils.build_redirect_url(entry.link)
+    };
+    message.addAttachment(thumbnail);
+    message.text([
+        entry.title
+    ]);
+
+    return message;
+
+    // var images = [new builder.CardImage(session)
+    //     .url(entry.thumbnail)];
+    // var action = builder.CardAction
+    //     .openUrl(session, utils.build_redirect_url(entry.link), 'Open');
+    // var card = new builder.HeroCard(session)
+    //     .images(images)
+    //     .title(entry.title)
+    //     .buttons([action])
+    //     .tap(action);
+    // message.addAttachment(card.toAttachment());
+    // return message;
 
 };

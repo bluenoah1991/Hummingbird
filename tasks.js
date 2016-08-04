@@ -58,8 +58,7 @@ exports.LoopTask = (function(){
                 console.log(`Send message '${entry.title}' to user '${this.user.name}'`);
                 this.sendMessageUseCallback(function(session){
                     var message = new builder.Message(session);
-                    var card = cards.NewsCard(session, this);
-                    message.addAttachment(card.toAttachment());
+                    message = cards.NewsCard(session, message, this);
     	            return message;
                 }.bind(entry));// TODO complex message
             }.bind(this))
