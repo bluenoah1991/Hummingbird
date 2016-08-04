@@ -113,21 +113,23 @@ module.exports = (function(){
 			// 	'http://img3.duitang.com/uploads/item/201404/23/20140423181756_j2ZXn.jpeg'
 			// );
 
-			var image = new Image(
-				entry.thumbnail, 
-				entry.thumbnailWidth, 
-				entry.thumbnailHeight
-			);
-			return image.resizeBaseAspectRatio(16, 9)
-				.then(function(info){
-					entry.thumbnail = info.link;
-					entry.thumbnailWidth = info.width;
-					entry.thumbnailHeight = info.height;
-					return entry;
-				})
-				.catch(function(err){
-					return entry;
-				});
+			return entry;
+
+			// var image = new Image(
+			// 	entry.thumbnail, 
+			// 	entry.thumbnailWidth, 
+			// 	entry.thumbnailHeight
+			// );
+			// return image.resizeBaseAspectRatio(16, 9)
+			// 	.then(function(info){
+			// 		entry.thumbnail = info.link;
+			// 		entry.thumbnailWidth = info.width;
+			// 		entry.thumbnailHeight = info.height;
+			// 		return entry;
+			// 	})
+			// 	.catch(function(err){
+			// 		return entry;
+			// 	});
 		}).value();
 	};
 
