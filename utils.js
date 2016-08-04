@@ -20,4 +20,19 @@ exports.build_redirect_url = function(u){
         }
     }
     return url.format(uo);
-}
+};
+
+exports.build_absolute_url = function(pathname, filename){
+    var uo = {
+        protocol: 'https',
+        hostname: config.HOSTNAME,
+        port: config.PORT,
+        pathname: pathname,
+    }
+    var link = url.format(uo);
+    if(filename != undefined){
+        link = url.resolve(link, filename);
+    }
+    return link;
+};
+

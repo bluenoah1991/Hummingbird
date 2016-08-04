@@ -65,7 +65,7 @@ server.post('/api/messages', connector.listen());
 bot.library(libs.HedwigLibrary);
 
 bot.dialog('/', function(session){
-    session.beginDialog('hedwig:/root');
+    session.beginDialog('hedwig:/');
 });
 
 bot.on('contactRelationUpdate', function(event){
