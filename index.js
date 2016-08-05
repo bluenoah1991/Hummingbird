@@ -69,7 +69,14 @@ bot.dialog('/', function(session){
 });
 
 bot.on('contactRelationUpdate', function(event){
-    bot.beginDialog(event.address, 'hedwig:/welcome');
+    switch(event.action){
+        case 'add':
+            bot.beginDialog(event.address, 'hedwig:/welcome');
+            break;
+        case 'remove':
+            bot.beginDialog(event.address, 'hedwig:/delete');
+            break;
+    }
 });
 
 // Bootstrap

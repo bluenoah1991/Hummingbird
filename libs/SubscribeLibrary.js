@@ -13,15 +13,17 @@ module.exports = (function(){
         var message = session.message.text;
         var id = session.message.user.id;
         if(message == 'Finish'){
-            session.send('Thank you for your cooperation, I will provide you with the latest information on time.');
+            session.send('Thank you for your cooperation. We will deliver the latest news to you in time.');
             session.endDialog();
             return;
         }
         models.Category.findOne({title: message}).then(function(doc){
             if(doc == undefined){
                 var message = new builder.Message(session);
-                cards.SubscribeCard(session).then(function(card){
-                    message.addAttachment(card);
+                cards.SubscribeCard(session).then(function(cardGroup){
+                    _.each(cardGroup, function(card){
+                        message.addAttachment(card);
+                    });
                     session.send(message);
                 });
                 return;
@@ -39,7 +41,7 @@ module.exports = (function(){
                 return doc.save();
             }, _, doc))
             .then(function(){
-                session.send(`You subscribe to the ${doc.title} news`);
+                session.send(`Thank you for subscribing to the ${doc.title} news`);
             });
         })
         .catch(function(err){

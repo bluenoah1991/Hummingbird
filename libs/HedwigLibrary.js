@@ -26,21 +26,21 @@ module.exports = (function(){
         };
         message.addAttachment(image);
         message.text([
-            'Hi there, I am Hedwig. I will provide you with the up-to-date news and artice.'
+            'Hi there, I am Hedwig. I will deliver to you with the Latest News & Topics.'
         ]);
         message.addAttachment(cards.EntryCard(session));
         session.send(message);
     });
 
     lib.dialog('/feedback', [function(session, args, next){
-        builder.Prompts.text(session, 'Send feedback directly:');
+        builder.Prompts.text(session, 'Your feedback:');
     },
     function(session, results){
         var name = session.message.user.name;
         var content = results.response;
         new models.Feedback({name: name, content: content}).save()
             .then(function(doc){
-                session.send('Thank you for your support.');
+                session.send('Thank you for your feedback. :)');
                 session.endDialog();
             })
             .catch(function(err){
@@ -48,6 +48,16 @@ module.exports = (function(){
                 session.endDialog();
             });
     }]);
+
+    lib.dialog('/delete', function(session, args, next){
+        for(var m in session.userData){
+            delete session.userData[m];
+        }
+        Profile.delete(session.message.user.id)
+            .then(function(){
+                console.log(`Delete user ${session.message.user.name}`);
+            });
+    });
 
     lib.dialog('/', function(session){
         var id = session.message.user.id;
@@ -84,6 +94,15 @@ module.exports = (function(){
                 session.beginDialog('subscribe:/');
             } else {
                 switch(session.message.text){
+                    case 'Cancel my subscription':
+                        for(var m in session.userData){
+                            delete session.userData[m];
+                        }
+                        Profile.delete(id)
+                            .then(function(){
+                                session.send('You have cancelled your subscription successfully.');
+                            });
+                        break;
                     case 'Feedback':
                         session.beginDialog('/feedback');
                         break;
