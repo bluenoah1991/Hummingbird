@@ -32,3 +32,13 @@ exports.SubscribeCard = function(session){
 
 };
 
+exports.MenuCard = function(session){
+
+    var buttons = [
+        builder.CardAction.imBack(session, 'Feedback', 'Feedback')
+    ];
+    return new builder.HeroCard(session)
+        .text(`Hi, ${session.userData.profile.user.name}. I will provide you with the latest information on time :)`)
+        .buttons(buttons);
+
+};

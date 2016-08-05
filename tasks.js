@@ -40,7 +40,7 @@ exports.LoopTask = (function(){
         if(doc == undefined){
             return;
         }
-        console.log(`Check user '${doc.name}' (${new Date().toString()})`);
+        console.log(`Check user '${doc.user.name}' (${new Date().toString()})`);
         _.each(doc.subscribes, function(subscribe){
             var entries = feedsMap[subscribe.category];
             if(entries == undefined){
@@ -55,7 +55,7 @@ exports.LoopTask = (function(){
             var lastEntry = entries.filter(function(entry){
                 return entry.timestamp > timestamp;
             }).each(function(entry){
-                console.log(`Send message '${entry.title}' to user '${this.user.name}'`);
+                console.log(`Send message '${entry.title}' to user '${this.user.user.name}'`);
                 this.sendMessage(_.partial(function(session, entry){
                     session.send(`${entry.title} ${entry.link}`);
                 }, _, entry));// TODO complex message
@@ -64,7 +64,7 @@ exports.LoopTask = (function(){
             if(_.isObject(lastEntry)){
                 subscribe.timestamp = lastEntry.timestamp;
                 subscribe.parent().save().then(function(doc){
-                    console.log(`Update subscription time stamp that user '${doc.name}'`);
+                    console.log(`Update subscription time stamp that user '${doc.user.name}'`);
                 });
             }
         }.bind(new Conversation(doc, this.bot, this.connector)));
