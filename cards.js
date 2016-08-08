@@ -8,7 +8,7 @@ var utils = require('./utils');
 exports.EntryCard = function(session){
 
     var button = builder.CardAction.imBack(
-        session, 'OK', 'OK');
+        session, 'YES', 'YES');
     return new builder.HeroCard(session)
         .text('Ready to use?')
         .buttons([button]);
@@ -40,16 +40,6 @@ exports.SubscribeCard = function(session){
                 }).value();
 
             return cardGroup;
-            // var buttons = [];
-            // for(var index in docs){
-            //     buttons.push(builder.CardAction.imBack(
-            //         session, docs[index].title, docs[index].title));
-            // }
-            // buttons.push(builder.CardAction.imBack(session, 'Finish', 'Finish'));
-            // var card = new builder.HeroCard(session)
-            //     .title(`Hi, ${session.userData.profile.user.name}. Please choose your interests:`)
-            //     .buttons(buttons);
-            // return card;
         });
 
 };
