@@ -42,7 +42,7 @@ module.exports = (function(){
                 return doc.save();
             }, _, doc))
             .then(function(){
-                session.send(`You subscribe to the ${doc.title} news`);
+                session.send(`You subscribe to the ${doc.title} news.`);
             });
         })
         .catch(function(err){
