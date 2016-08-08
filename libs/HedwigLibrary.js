@@ -43,10 +43,12 @@ module.exports = (function(){
             .then(function(doc){
                 session.send('Thank you for your feedback. :)');
                 session.endDialog();
+                session.beginDialog('hedwig:/', true);
             })
             .catch(function(err){
                 console.log(err);
                 session.endDialog();
+                session.beginDialog('hedwig:/', true);
             });
     }]);
 
@@ -60,7 +62,7 @@ module.exports = (function(){
             });
     });
 
-    lib.dialog('/', function(session){
+    lib.dialog('/', function(session, args){
         var id = session.message.user.id;
 
         // Hack
@@ -94,7 +96,7 @@ module.exports = (function(){
             if(result){
                 session.beginDialog('subscribe:/');
             } else {
-                switch(session.message.text){
+                switch(args != undefined ? args : session.message.text){
                     case 'Latest News':
                         var task = new tasks.IsolatedTask(session.message.user.id, session);
                         task.start();

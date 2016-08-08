@@ -43,6 +43,7 @@ exports.IsolatedTask = (function(){
                         console.log(`Send message '${entry.title}' to user '${user.user.name}'`);
                         this.session.send(`${entry.title} ${entry.link}`);
                     }.bind(this));
+                    this.session.beginDialog('hedwig:/', true);
                 }.bind(this)).done();
         }.bind(this));
     };

@@ -15,6 +15,7 @@ module.exports = (function(){
         if(message == 'Finish'){
             session.send('Thank you for your cooperation. We will deliver the latest news to you in time.');
             session.endDialog();
+            session.beginDialog('hedwig:/', true);
             return;
         }
         models.Category.findOne({title: message}).then(function(doc){
