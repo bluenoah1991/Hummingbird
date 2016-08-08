@@ -7,6 +7,7 @@ var Profile = require('../profile');
 var utils = require('../utils');
 var cards = require('../cards');
 var models = require('../models');
+var tasks = require('../tasks');
 
 var SubscribeLibrary = require('./SubscribeLibrary');
 var ProactiveLibrary = require('./ProactiveLibrary');
@@ -42,10 +43,12 @@ module.exports = (function(){
             .then(function(doc){
                 session.send('Thank you for your feedback. :)');
                 session.endDialog();
+                session.beginDialog('hedwig:/', true);
             })
             .catch(function(err){
                 console.log(err);
                 session.endDialog();
+                session.beginDialog('hedwig:/', true);
             });
     }]);
 
@@ -59,7 +62,7 @@ module.exports = (function(){
             });
     });
 
-    lib.dialog('/', function(session){
+    lib.dialog('/', function(session, args){
         var id = session.message.user.id;
 
         // Hack
@@ -93,7 +96,11 @@ module.exports = (function(){
             if(result){
                 session.beginDialog('subscribe:/');
             } else {
-                switch(session.message.text){
+                switch(args != undefined ? args : session.message.text){
+                    case 'Latest News':
+                        var task = new tasks.IsolatedTask(session.message.user.id, session);
+                        task.start();
+                        break;
                     case 'Cancel my subscription':
                         for(var m in session.userData){
                             delete session.userData[m];

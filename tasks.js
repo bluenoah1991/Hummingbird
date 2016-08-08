@@ -9,6 +9,48 @@ var Conversation = require('./conversation');
 var models = require('./models');
 var cards = require('./cards');
 
+exports.IsolatedTask = (function(){
+    function IsolatedTask(u, session){
+        this.user = this.getUser(u);
+        this.session = session;
+    }
+
+    IsolatedTask.prototype.getUser = function(u){
+        if(_.isObject(this.u)){
+            return Q.fcall(function(){
+                return u;
+            });
+        } else {
+            return models.User.findOne({id: u})
+                .then(function(doc){
+                    return doc;
+                });
+        }
+    };
+
+    IsolatedTask.prototype.start = function(){
+        this.user.then(function(user){
+            console.log(`${user.user.name}'s Isolated task start runing (${new Date().toString()})`);
+            if(user.subscribes == undefined ||
+                user.subscribes.length == 0){
+                return;
+            }
+            var index = _.random(user.subscribes.length - 1);
+            var subscribe = user.subscribes[index];
+            Resource.recent(subscribe.category)
+                .then(function(result){
+                    result.entries.each(function(entry){
+                        console.log(`Send message '${entry.title}' to user '${user.user.name}'`);
+                        this.session.send(`${entry.title} ${entry.link}`);
+                    }.bind(this));
+                    this.session.beginDialog('hedwig:/', true);
+                }.bind(this)).done();
+        }.bind(this));
+    };
+
+    return IsolatedTask;
+})();
+
 exports.LoopTask = (function(){
     function LoopTask(bot, connector){
         this.bot = bot;
