@@ -47,6 +47,7 @@ exports.SubscribeCard = function(session){
 exports.MenuCard = function(session){
 
     var buttons = [
+        builder.CardAction.imBack(session, 'Latest News', 'Latest News'),
         builder.CardAction.imBack(session, 'Feedback', 'Feedback'),
         builder.CardAction.imBack(session, 'Cancel my subscription', 'Cancel my subscription')
     ];

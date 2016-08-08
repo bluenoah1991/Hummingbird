@@ -7,6 +7,7 @@ var Profile = require('../profile');
 var utils = require('../utils');
 var cards = require('../cards');
 var models = require('../models');
+var tasks = require('../tasks');
 
 var SubscribeLibrary = require('./SubscribeLibrary');
 var ProactiveLibrary = require('./ProactiveLibrary');
@@ -94,6 +95,10 @@ module.exports = (function(){
                 session.beginDialog('subscribe:/');
             } else {
                 switch(session.message.text){
+                    case 'Latest News':
+                        var task = new tasks.IsolatedTask(session.message.user.id, session);
+                        task.start();
+                        break;
                     case 'Cancel my subscription':
                         for(var m in session.userData){
                             delete session.userData[m];

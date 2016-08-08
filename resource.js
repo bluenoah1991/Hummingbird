@@ -62,7 +62,7 @@ module.exports = (function(){
 
 	Resource.recent = function(category, lastTimeStamp){
 		if(_.isString(category)){
-			models.Category.find({id: category})
+			return models.Category.findOne({id: category})
 				.then(function(doc){
 					return Resource.recent_(doc, lastTimeStamp);
 				});
@@ -83,8 +83,11 @@ module.exports = (function(){
 						return entry.timestamp > lastTimeStamp;
 					});
 				}
-				var entries = chain.sortBy('timestamp').last(5).value();
-				return Resource.processEntry(entries);
+				var entries = chain.sortBy('timestamp').last(3).value();
+				if(lastTimeStamp != undefined){
+					return Resource.processEntry(entries);
+				}
+				return entries;
 				//return Resource.processThumbnail(entries);
 			})
 			.then(function(entires){
