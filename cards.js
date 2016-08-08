@@ -8,7 +8,7 @@ var utils = require('./utils');
 exports.EntryCard = function(session){
 
     var button = builder.CardAction.imBack(
-        session, 'YES', 'YES');
+        session, 'Yes', 'Yes');
     return new builder.HeroCard(session)
         .text('Ready to use?')
         .buttons([button]);
