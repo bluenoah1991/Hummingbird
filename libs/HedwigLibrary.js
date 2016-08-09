@@ -27,7 +27,7 @@ module.exports = (function(){
         };
         message.addAttachment(image);
         message.text([
-            'Hi there, I\'m Hedwig. I will deliver with the Latest News & Topics to you.'
+            'Hi there, I\'m Helen. I will deliver with the Latest News & Topics to you.'
         ]);
         message.addAttachment(cards.EntryCard(session));
         session.send(message);
