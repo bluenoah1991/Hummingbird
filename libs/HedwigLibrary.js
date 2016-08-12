@@ -30,7 +30,8 @@ module.exports = (function(){
             'Hi there, I\'m Helen. I will deliver with the Latest News & Topics to you.'
         ]);
         message.addAttachment(cards.EntryCard(session));
-        session.send(message);
+        //session.send(message);
+        session.endDialog(message);
     });
 
     lib.dialog('/feedback', [function(session, args, next){
