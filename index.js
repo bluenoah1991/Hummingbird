@@ -111,4 +111,4 @@ db.once('open', function() {
 
 }.bind(db));
 
-mongoose.connect('mongodb://localhost:27017/instflow');
+mongoose.connect(config.MONGOCONNECT);
