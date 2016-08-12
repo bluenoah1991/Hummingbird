@@ -8,6 +8,7 @@ var config = require('./config');
 var libs = require('./libs');
 var tasks = require('./tasks');
 var Scheduler = require('./scheduler');
+var middleware = require('./middleware');
 
 //=========================================================
 // Bot Setup
@@ -18,7 +19,7 @@ var server = restify.createServer({
     certificate: fs.readFileSync('cert/instflow.org.crt'),
     key: fs.readFileSync('cert/instflow.org.key')
 });
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.listen(config.PORT, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
 
@@ -60,6 +61,8 @@ server.post('/api/messages', connector.listen());
 //=========================================================
 // Bots Dialogs
 //=========================================================
+
+bot.use(middleware.CarnivalMiddleware);
 
 //bot.library(libs.SubscribeLibrary);
 bot.library(libs.HedwigLibrary);
