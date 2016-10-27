@@ -80,7 +80,7 @@ bot.on('contactRelationUpdate', function(event){
     }
 });
 
-bot.use(new instflow.ExtractMiddleware());
+bot.use(new instflow.ExtractMiddleware.default());
 
 // Bootstrap
 
