@@ -1,5 +1,5 @@
 {
-  "name": "instflow",
+  "name": "hummingbird",
   "version": "0.0.1",
   "description": "Skype robot",
   "main": "index.js",
@@ -14,6 +14,7 @@
   "dependencies": {
     "botbuilder": "^3.1.1",
     "botbuilder-calling": "^3.0.0",
+    "instflow": "^1.0.0",
     "kwargsjs": "^1.0.1",
     "moment": "^2.14.1",
     "mongodb": "^2.2.4",

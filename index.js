@@ -3,6 +3,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var fs = require('fs');
+var instflow = require('instflow');
 
 var config = require('./config');
 var libs = require('./libs');
@@ -78,6 +79,8 @@ bot.on('contactRelationUpdate', function(event){
             break;
     }
 });
+
+bot.use(new instflow.ExtractMiddleware());
 
 // Bootstrap
 
