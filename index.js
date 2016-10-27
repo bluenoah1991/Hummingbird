@@ -94,18 +94,27 @@ db.once('open', function() {
 
     // Seeds
 
-    var Seeds = require('./seeds');
-    Seeds.fillWithDropDb(this.db)
-        .then(function(){
-            // background loop
+    if(process.argv.indexOf('-seeds') > 0){
+        var Seeds = require('./seeds');
+        Seeds.fillWithDropDb(this.db)
+            .then(function(){
+                // background loop
 
-            var callback = task.start.bind(task);
-            if(config.LOOP_TASK_BOOT_EXEC){
-                callback();
-            }
-            scheduler.loop(2, callback);
-        });
+                var callback = task.start.bind(task);
+                if(config.LOOP_TASK_BOOT_EXEC){
+                    callback();
+                }
+                scheduler.loop(2, callback);
+            });
+    } else {
+        // background loop
 
+        var callback = task.start.bind(task);
+        if(config.LOOP_TASK_BOOT_EXEC){
+            callback();
+        }
+        scheduler.loop(2, callback);
+    }
 }.bind(db));
 
 mongoose.connect('mongodb://localhost:27017/instflow');
